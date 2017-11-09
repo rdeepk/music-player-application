@@ -21,6 +21,36 @@ const songs = [
   new Song('/transmission.mp3', 'Transmission', 'Energetic electronic melody featuring modern drums, snaking bass and explosive electric guitar. Tempo: 120bpm', 2)
 ]
 
+artists = ['Post Malone', 
+'Camila Cabello',
+'Sam Smith',
+'Dua Lipa',
+// 'Maroon 5',
+// 'Selena Gomez',
+// 'Ed Sheeran',
+// 'ZAYN',
+// 'Marshmello',
+// 'Lil Pump',
+// 'NF',
+// 'Logic',
+// 'Khalid',
+// 'Charlie Puth',
+// 'Kygo',
+// 'Demi Lovato',
+// 'Hailee Steinfeld',
+// 'French Montana',
+// 'Avicii',
+// 'Lil Uzi Vert',
+// 'Imagine Dragons',
+// 'Macklemore',
+// '21 Savage',
+// 'Natti Natasha',
+// 'Migos',
+// 'P!nk',
+// 'Charlie Puth',
+// 'Justin Bieber'
+];
+
 
 app.get('/users', function (req, res) {
   console.log("here");
@@ -30,13 +60,43 @@ app.get('/users', function (req, res) {
 });
 
 app.get('/tracks', (req, res) => {
-  //uri: 'https://api.spotify.com/v1/tracks/?ids=3n3Ppam7vgaVa1iaRUc9Lp,3twNvmDtFQtAd5gMKedhLD',
+  let tokenObj;
+  let resArr = [];
   getSpotifyToken()
-    .then((json) => {
-      console.log(json);
-      res.json(json);
-    })
+              .then((json) => {
+                  tokenObj = json;
+                })
+              .then(() => {
+                artists.forEach((artist, i) => {
+                  getTracks(tokenObj, artist).then((tracks) => {
+                    let itracks = tracks.tracks.items.filter((track, i)=>{
+                      if(track.preview_url) {
+                        return true;
+                      }
+                    })
+                    console.log(itracks);
+                    resArr.push(itracks);
+                  })
+                  .then(()=>{
+                    res.json(resArr);
+                  })
+                });
+               
+              })
+})
 
+
+getTracks = ((tokenBody, artist) => {
+  var token = tokenBody.access_token;
+  var options = {
+    //uri: 'https://api.spotify.com/v1/tracks/?ids=2bL2gyO6kBdLkNSkxXNh6x,3twNvmDtFQtAd5gMKedhLD',
+    uri: 'https://api.spotify.com/v1/search?q='+artist+'&type=track',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    json: true
+  };
+  return sendRequest(options);
 })
 
 app.get('/callback', (req, res) => {
@@ -44,7 +104,6 @@ app.get('/callback', (req, res) => {
 })
 
 getSpotifyAuthString = () => {
-  
   return new Buffer(clientId + ':' + clientSecret).toString('base64');
 }
 
