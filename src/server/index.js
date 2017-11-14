@@ -2,24 +2,24 @@ const express = require('express');
 const app = express();
 const rp = require('request-promise');
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
-function Song(source, title, description, id) {
-  this.source = source;
-  this.title = title;
-  this.description = description;
-  this.id = id;
-}
+// function Song(source, title, description, id) {
+//   this.source = source;
+//   this.title = title;
+//   this.description = description;
+//   this.id = id;
+// }
 
-const songs = [
-  new Song('/upstep.mp3', 'Upstep', 'Brutal beat and bulky bass are the foundation for a dubstep frenzy featuring synths, wailing guitar and jitters and glitches. Tempo: 140bpm', 0),
-  new Song('/olympian.mp3', 'Olympian', 'An energetic, vibrant track featuring positive electric guitar licks and modern drums creates useful sports theme. Tempo: 130bpm', 1),
-  new Song('/transmission.mp3', 'Transmission', 'Energetic electronic melody featuring modern drums, snaking bass and explosive electric guitar. Tempo: 120bpm', 2)
-]
+// const songs = [
+//   new Song('/upstep.mp3', 'Upstep', 'Brutal beat and bulky bass are the foundation for a dubstep frenzy featuring synths, wailing guitar and jitters and glitches. Tempo: 140bpm', 0),
+//   new Song('/olympian.mp3', 'Olympian', 'An energetic, vibrant track featuring positive electric guitar licks and modern drums creates useful sports theme. Tempo: 130bpm', 1),
+//   new Song('/transmission.mp3', 'Transmission', 'Energetic electronic melody featuring modern drums, snaking bass and explosive electric guitar. Tempo: 120bpm', 2)
+// ]
 
 artists = ['Post Malone', 
 'Camila Cabello',
@@ -59,30 +59,28 @@ app.get('/users', function (req, res) {
   });
 });
 
-app.get('/tracks', (req, res) => {
-  let tokenObj;
-  let resArr = [];
+
+app.get('/artists', (req, res) => {
+ let resArr = [];
+ let completed_requests = 0;
   getSpotifyToken()
-              .then((json) => {
-                  tokenObj = json;
-                })
-              .then(() => {
-                artists.forEach((artist, i) => {
-                  getTracks(tokenObj, artist).then((tracks) => {
-                    let itracks = tracks.tracks.items.filter((track, i)=>{
-                      if(track.preview_url) {
-                        return true;
+              .then((tokenObj) => {
+                  
+                  artists.forEach((artist, i) => {
+                    getTracks(tokenObj, artist).then((tracks) => {
+                      let itracks = tracks.tracks.items.filter((track, i)=>{
+                        if(track.preview_url) {
+                          return true;
+                        }
+                      })
+                      completed_requests++;
+                      resArr.push(itracks);
+                      if(completed_requests === artists.length) {
+                        res.json(resArr);
                       }
                     })
-                    console.log(itracks);
-                    resArr.push(itracks);
                   })
-                  .then(()=>{
-                    res.json(resArr);
-                  })
-                });
-               
-              })
+            })
 })
 
 
