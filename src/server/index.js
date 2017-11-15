@@ -2,11 +2,11 @@ const express = require('express');
 const app = express();
 const rp = require('request-promise');
 
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 // function Song(source, title, description, id) {
 //   this.source = source;
@@ -51,44 +51,82 @@ artists = ['Post Malone',
 // 'Justin Bieber'
 ];
 
-
-app.get('/users', function (req, res) {
-  console.log("here");
-  res.json({
-    data: "home"
-  });
-});
-
+app.get('/default/:artistName', (req, res) => {
+  getSpotifyToken()
+                .then((tokenObj) => {
+                  getSpotifyData(tokenObj, req.params.artistName, 'artist').then((data) => {
+                    res.json({
+                      "name": data.artists.items[0].name,
+                      "id": data.artists.items[0].id,
+                      "apiUrl": data.artists.items[0].href,
+                      "images": data.artists.items[0].images
+                    })
+                  });
+                });
+})
 
 app.get('/artists', (req, res) => {
- let resArr = [];
+ let spotifyArtists = [];
  let completed_requests = 0;
+//  let collectRequests = [];
   getSpotifyToken()
               .then((tokenObj) => {
                   
-                  artists.forEach((artist, i) => {
-                    getTracks(tokenObj, artist).then((tracks) => {
-                      let itracks = tracks.tracks.items.filter((track, i)=>{
-                        if(track.preview_url) {
-                          return true;
-                        }
+                  artists.forEach((artist, i) => {                  
+                    // collectRequests.push((tokenObj, artist) => {getSpotifyData(tokenObj, artist)})
+                   
+                    getSpotifyData(tokenObj, artist, 'artist').then((tracks) => {
+                      spotifyArtists.push({
+                        "name": tracks.artists.items[0].name,
+                        "id": tracks.artists.items[0].id,
+                        "apiUrl": tracks.artists.items[0].href,
+                        "images": tracks.artists.items[0].images
                       })
-                      completed_requests++;
-                      resArr.push(itracks);
+                       completed_requests++;
                       if(completed_requests === artists.length) {
-                        res.json(resArr);
+                        console.log(spotifyArtists);
+                        res.json(spotifyArtists);
                       }
                     })
                   })
+                  // Promise.all(collectRequests).then(values => { 
+                  //   console.log(values); // [3, 1337, "foo"] 
+                  // });
             })
 })
 
+app.get('/tracks/:artistName', (req, res) => {
+  getSpotifyToken()
+                .then((tokenObj) => {
+                  getSpotifyData(tokenObj, req.params.artistName, 'track').then((data) => {
+                    let songs = [];
+                    let itracks = data.tracks.items.filter((track, i)=>{
+                      if(track.preview_url !== null) {
+                        songs.push({
+                          id:track.id,
+                          images: track.album.images,
+                          track: track.preview_url,
+                          spotifyUrl: track.external_urls.spotify,
+                          name: track.name,
+                          popularity: track.popularity,
+                          duration: track.duration_ms
+                        });
+                        return true;
+                      }
+                    })
+                    console.log(songs);
+                    res.json(songs);
+                  });
+                });
+})
 
-getTracks = ((tokenBody, artist) => {
+
+
+getSpotifyData = ((tokenBody, artist, type) => {
   var token = tokenBody.access_token;
   var options = {
     //uri: 'https://api.spotify.com/v1/tracks/?ids=2bL2gyO6kBdLkNSkxXNh6x,3twNvmDtFQtAd5gMKedhLD',
-    uri: 'https://api.spotify.com/v1/search?q='+artist+'&type=track',
+    uri: 'https://api.spotify.com/v1/search?q='+artist+'&type='+type,
     headers: {
       'Authorization': 'Bearer ' + token
     },
