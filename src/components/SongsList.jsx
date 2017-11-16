@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
+import { Link } from 'react-router-dom';
 
 class SongsList extends Component {
 
     handleViewSong = (e) => {
-        e.preventDefault();
         this.props.showSongDetails(e.target.id);
     }
 
@@ -24,7 +24,8 @@ class SongsList extends Component {
                                 {song.name}
                             </div>
                             <div className="song-view">
-                                <a href="" id={i} onClick={(e) => {this.handleViewSong(e)}}>More Info</a>
+                            <Link to={"/"+ i} onClick={(e) => {this.handleViewSong(e)}}>More Info</Link>
+                                {/* <a href="" id={i} onClick={(e) => {this.handleViewSong(e)}}>More Info</a> */}
                             </div>
                             <div className="song-play">
                                 <a href="" onClick={(e) => {this.playSong(e)}}>

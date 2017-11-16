@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import { Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import SongsList from './SongsList';
 import SongDetails from './SongDetails';
 import Artists from './Artists';
@@ -14,16 +14,14 @@ class App extends Component {
       artist: defaultArtist,
       currentSong: 0,
       songs: [],
-      showDetails: false,
       loading:false,
       artistsJSX: [],
       error : '',
-      songDetailsIndex: -1
+      showDetails: false
     }
   }
 
   componentWillMount() {
-    console.log("will mount");
     this.setState({
       loading: true
     })
@@ -67,7 +65,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("did mount");
+
     //fetch all artists
     let artistsData = this.sendGetRequest(serverUrl, 'artists');
     artistsData.then(response => {
@@ -134,16 +132,14 @@ class App extends Component {
   showSongDetails= (index) => {
     this.setState({
       showDetails: true,
-      songDetails: this.state.songs[index],
-      songDetailsIndex: index
+      songDetails: this.state.songs[index]
     })
   }
 
   showSongList = () => {
     this.setState({
       showDetails: false,
-      songDetails: [],
-      songDetailsIndex: -1
+      songDetails: []
     })
   }
 
@@ -154,8 +150,7 @@ class App extends Component {
     }
 
     let artistsJSX = this.state.songs[this.state.currentSong].artists.map((artist, i) => {
-        return i > 0?<span>, {artist.name}</span> : <span>{artist.name}</span>
-        {/* <p>{artist.external_urls.spotify}</p> */}        
+        return i > 0?<span>, {artist.name}</span> : <span>{artist.name}</span>      
      })
     return (
       <div className="app">
@@ -174,8 +169,19 @@ class App extends Component {
               <div className="col-sm-9">{this.state.songs[this.state.currentSong].name} By: {artistsJSX}</div>
             </div> 
             </div>
-            { !this.state.showDetails && <SongsList songs={this.state.songs} changeSong={this.changeSong} setCurrentSong={this.setCurrentSong} showSongDetails={this.showSongDetails} /> }
-            { this.state.showDetails && <SongDetails songDetails={this.state.songDetails} showSongList={this.showSongList} setCurrentSong={this.setCurrentSong} currentSongIndex={this.state.songDetailsIndex} />}
+            {!this.state.showDetails && <Route path="/" render={(props) => (
+                                                    <SongsList songs={this.state.songs}
+                                                              changeSong={this.changeSong}
+                                                              setCurrentSong={this.setCurrentSong}
+                                                              showSongDetails={this.showSongDetails}
+                                                  />
+                )} />}
+            {this.state.showDetails && <Route path="/:songId" render={(props) => 
+                                                            <SongDetails  songs={this.state.songs}
+                                                                          showSongList={this.showSongList}
+                                                                          setCurrentSong={this.setCurrentSong} {...props}
+                                                            />
+                } />}
       </div>
     );
   }

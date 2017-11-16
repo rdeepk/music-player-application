@@ -3,19 +3,17 @@ import React, {Component} from 'react';
 class SongDetails extends Component {
 
     showSongList = (event) => {
-        event.preventDefault();
         this.props.showSongList();
     }
 
     handlePlaySong = (e) => {
         e.preventDefault();
-        this.props.setCurrentSong(this.props.currentSongIndex);
+        this.props.setCurrentSong(Number(this.props.match.params.songId));
     }
 
     render() {
-         //console.log(this.props.match.params)
-         console.log(this.props.songDetails);
-         const {songDetails} = this.props;
+         console.log(this.props.songs)
+         let songDetails = this.props.songs[Number(this.props.match.params.songId)];
          let artistsJSX = songDetails.artists.map((artist, i) => {
             return <span>{artist.name}</span>
             {/* <p>{artist.external_urls.spotify}</p> */}        
@@ -41,7 +39,7 @@ class SongDetails extends Component {
                         </div>
                    
                 </div>
-                <a href="" onClick={(e) => {this.showSongList(e)}}>Back</a>
+                <a href="/" onClick={(e) => {this.showSongList(e)}}>Back</a>
             </div>
         )
     }
