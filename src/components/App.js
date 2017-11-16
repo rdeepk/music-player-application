@@ -129,8 +129,7 @@ class App extends Component {
     })
   }
 
-  showSongList = (event) => {
-    event.preventDefault();
+  showSongList = () => {
     this.setState({
       showDetails: false,
       songDetails: []
@@ -156,7 +155,7 @@ class App extends Component {
             </div>
             </div>
             { !this.state.showDetails && <SongsList songs={this.state.songs} changeSong={this.changeSong} setCurrentSong={this.setCurrentSong} showSongDetails={this.showSongDetails} /> }
-            { this.state.showDetails && <SongDetails songDetails={this.state.songDetails} />}
+            { this.state.showDetails && <SongDetails songDetails={this.state.songDetails} showSongList={this.showSongList} />}
       </div>
     );
   }

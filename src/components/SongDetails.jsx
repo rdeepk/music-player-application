@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 
 class SongDetails extends Component {
+
+    showSongList = (event) => {
+        event.preventDefault();
+        this.props.showSongList();
+    }
+
     render() {
          //console.log(this.props.match.params)
          console.log(this.props.songDetails);
@@ -27,7 +33,7 @@ class SongDetails extends Component {
                         </div>
                    
                 </div>
-                <a href="" onClick={(e) => {this.props.showSongList(e)}}>Back</a>
+                <a href="" onClick={(e) => {this.showSongList(e)}}>Back</a>
             </div>
         )
     }
