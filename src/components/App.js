@@ -12,14 +12,19 @@ class App extends Component {
     this.state = {
       artists: [],
       artist: defaultArtist,
-      // currentSong: 0,
+      currentSong: 0,
       songs: [],
-      list:true,
+      showDetails: false,
+      loading:false,
+      songDetails: []
     }
   }
 
   componentWillMount() {
-
+    console.log("will mount");
+    this.setState({
+      loading: true
+    })
     //fetch one artist first to avoid time lag
 
     let defaultArtistData = this.sendGetRequest(serverUrl, 'default/'+defaultArtist);
@@ -42,13 +47,18 @@ class App extends Component {
       if (response.ok) {
         response.json().then(json => {
           console.log(json);
-          this.setState({songs: json})
+          this.setState({songs: json},() => {
+            this.setState({
+              loading: false
+            })
+          })
         });
       }
     });
   }
 
   componentDidMount() {
+    console.log("did mount");
     //fetch all artists
     let artistsData = this.sendGetRequest(serverUrl, 'artists');
     artistsData.then(response => {
@@ -72,36 +82,81 @@ class App extends Component {
     })
   }
 
-  hangeSongs = (index) => {
-    this.setState({
-        currentSong: index
-    }, () => {
-        this.audioPlayer.load()
-        this.audioPlayer.play()
-    })
-}
+  setArtist = (name) => {
+      this.setState({
+        artist: name
+      }, () =>{
+        this.fetchTracks(this.state.artist);
+      })
+  }
 
-setArtist = (name) => {
+  setCurrentSong = (index) => {
+    console.log(index);
+    console.log(this.state.songs.length-1);
     this.setState({
-      artist: name
-    }, () =>{
-      this.fetchTracks(this.state.artist);
+      currentSong: index
+  }, () => {
+    this.playSong();
     })
-}
+  }
+
+  playNext = () => {
+    let length = this.state.songs.length;
+    if(Number(this.state.currentSong) === Number(length-1)){
+      this.setState({
+        currentSong: 0
+      },() => {
+        this.playSong();
+      })
+    } else {
+      this.setState({
+        currentSong: Number(this.state.currentSong)+Number(1)
+      }, () => {
+        this.playSong();
+      })
+    }
+  }
+
+  playSong = () => {
+    this.audioPlayer.load()
+    this.audioPlayer.play()
+  }
+
+  showSongDetails= (index) => {
+    this.setState({
+      showDetails: true,
+      songDetails: this.state.songs[index]
+    })
+  }
+
+  showSongList = (event) => {
+    event.preventDefault();
+    this.setState({
+      showDetails: false,
+      songDetails: []
+    })
+  }
 
   render() {
+    
+   if(this.state.loading) {
+     return <h3>Loading....</h3>
+   }
     return (
-      <div className="App">
+      <div className="app">
+        <div className="header">
             <h1>Audio Player</h1>
-            <Artists artists={this.state.artists} setArtist={this.setArtist} selectedArtist={this.state.artist}/>
-            <audio controls ref={(self) => {this.audioPlayer = self}}>
-                {/* <source src={this.props.songs[this.state.currentSong].source} /> */}
-                <source src="https://p.scdn.co/mp3-preview/50b0e32ba40bb79e039c1fc6b8a7a6d4ef554886?cid=dd0dbf7d895d4c2bb696143f14facc10" />
-            </audio>
-            {/* <button type="button" onClick={() => {this.changeSongs(2)}}>Change Song</button> */}
-            {/* <div>{artistsJSX}</div> */}
-            { this.state.list && <SongsList songs={this.state.songs} /> }
-            { this.state.details && <SongDetails />}
+            { !this.state.showDetails && <Artists artists={this.state.artists} setArtist={this.setArtist} selectedArtist={this.state.artist}/>}
+            <div className="row">
+              <div className="col-sm-12">
+                <audio controls ref={(self) => {this.audioPlayer = self}} onEnded={this.playNext}>
+                  <source src={this.state.songs[this.state.currentSong].track}/>
+                </audio>
+              </div>
+            </div>
+            </div>
+            { !this.state.showDetails && <SongsList songs={this.state.songs} changeSong={this.changeSong} setCurrentSong={this.setCurrentSong} showSongDetails={this.showSongDetails} /> }
+            { this.state.showDetails && <SongDetails songDetails={this.state.songDetails} />}
       </div>
     );
   }

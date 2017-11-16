@@ -23,13 +23,12 @@ app.use(function (req, res, next) {
 
 artists = ['Post Malone', 
 'Camila Cabello',
-'Sam Smith',
 'Dua Lipa',
-// 'Maroon 5',
-// 'Selena Gomez',
-// 'Ed Sheeran',
-// 'ZAYN',
-// 'Marshmello',
+'Maroon 5',
+'Selena Gomez',
+'Ed Sheeran',
+'ZAYN',
+'Marshmello',
 // 'Lil Pump',
 // 'NF',
 // 'Logic',
@@ -102,19 +101,25 @@ app.get('/tracks/:artistName', (req, res) => {
                     let songs = [];
                     let itracks = data.tracks.items.filter((track, i)=>{
                       if(track.preview_url !== null) {
+                        console.log(track.album.name);
+                        console.log(track.name);
+                        console.log(track)
                         songs.push({
                           id:track.id,
                           images: track.album.images,
+                          track_number: track.track_number,
+                          album:  track.album.name,
                           track: track.preview_url,
                           spotifyUrl: track.external_urls.spotify,
                           name: track.name,
                           popularity: track.popularity,
-                          duration: track.duration_ms
+                          duration: track.duration_ms,
+                          artists: track.artists
                         });
                         return true;
                       }
                     })
-                    console.log(songs);
+                    //console.log(songs);
                     res.json(songs);
                   });
                 });
