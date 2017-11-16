@@ -236,3 +236,11 @@ audio {
     flex: 1 1 auto;
   }
 }
+
+.error {
+  margin-bottom: 50px;
+}
+
+.track-details a{
+  color: #000;
+}

@@ -16,7 +16,9 @@ class App extends Component {
       songs: [],
       showDetails: false,
       loading:false,
-      songDetails: []
+      artistsJSX: [],
+      error : '',
+      songDetailsIndex: -1
     }
   }
 
@@ -47,11 +49,18 @@ class App extends Component {
       if (response.ok) {
         response.json().then(json => {
           console.log(json);
-          this.setState({songs: json},() => {
-            this.setState({
-              loading: false
+          if(json.length !== 0) {
+            this.setState({songs: json},() => {
+              this.setState({
+                loading: false,
+                error: ''
+              })
             })
-          })
+          } else {
+            this.setState({
+              error: "No results found"
+            })
+          }
         });
       }
     });
@@ -92,10 +101,10 @@ class App extends Component {
 
   setCurrentSong = (index) => {
     console.log(index);
-    console.log(this.state.songs.length-1);
     this.setState({
       currentSong: index
   }, () => {
+    console.log(this.state.currentSong)
     this.playSong();
     })
   }
@@ -125,37 +134,48 @@ class App extends Component {
   showSongDetails= (index) => {
     this.setState({
       showDetails: true,
-      songDetails: this.state.songs[index]
+      songDetails: this.state.songs[index],
+      songDetailsIndex: index
     })
   }
 
   showSongList = () => {
     this.setState({
       showDetails: false,
-      songDetails: []
+      songDetails: [],
+      songDetailsIndex: -1
     })
   }
 
   render() {
     
-   if(this.state.loading) {
-     return <h3>Loading....</h3>
-   }
+    if(this.state.loading) {
+      return <h3>Loading....</h3>
+    }
+
+    let artistsJSX = this.state.songs[this.state.currentSong].artists.map((artist, i) => {
+        return i > 0?<span>, {artist.name}</span> : <span>{artist.name}</span>
+        {/* <p>{artist.external_urls.spotify}</p> */}        
+     })
     return (
       <div className="app">
         <div className="header">
             <h1>Audio Player</h1>
-            { !this.state.showDetails && <Artists artists={this.state.artists} setArtist={this.setArtist} selectedArtist={this.state.artist}/>}
+            { !this.state.showDetails && <Artists artists={this.state.artists} setArtist={this.setArtist} selectedArtist={this.state.artist} error={this.state.error}/>}
             <div className="row">
               <div className="col-sm-12">
-                <audio controls ref={(self) => {this.audioPlayer = self}} onEnded={this.playNext}>
+                <audio controls ref={(self) => {this.audioPlayer = self}} onEnded={this.playNext} autoPlay>
                   <source src={this.state.songs[this.state.currentSong].track}/>
                 </audio>
               </div>
             </div>
+            <div className="row">
+              <div className="col-sm-3"><img src={this.state.songs[this.state.currentSong].images[2].url} /></div>
+              <div className="col-sm-9">{this.state.songs[this.state.currentSong].name} By: {artistsJSX}</div>
+            </div> 
             </div>
             { !this.state.showDetails && <SongsList songs={this.state.songs} changeSong={this.changeSong} setCurrentSong={this.setCurrentSong} showSongDetails={this.showSongDetails} /> }
-            { this.state.showDetails && <SongDetails songDetails={this.state.songDetails} showSongList={this.showSongList} />}
+            { this.state.showDetails && <SongDetails songDetails={this.state.songDetails} showSongList={this.showSongList} setCurrentSong={this.setCurrentSong} currentSongIndex={this.state.songDetailsIndex} />}
       </div>
     );
   }

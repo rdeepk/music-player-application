@@ -7,6 +7,11 @@ class SongDetails extends Component {
         this.props.showSongList();
     }
 
+    handlePlaySong = (e) => {
+        e.preventDefault();
+        this.props.setCurrentSong(this.props.currentSongIndex);
+    }
+
     render() {
          //console.log(this.props.match.params)
          console.log(this.props.songDetails);
@@ -23,6 +28,9 @@ class SongDetails extends Component {
                         </div>
                         <div className="track-details">
                             <h2>{songDetails.name}</h2>
+                            <a href="" onClick={(e) => {this.handlePlaySong(e)}}>
+                                <i className="fa fa-play-circle-o" aria-hidden="true"></i>
+                            </a>
                             <p>Album: {songDetails.album}</p>
                             <p>Popularity: {songDetails.popularity}</p>
                             {/* <p>{songDetails.spotifyUrl}</p> */}

@@ -11,8 +11,8 @@ class Artists extends Component {
         })
         return (
             <div><select className="artists" value={this.props.selectedArtist} onChange={this.handleArtistSelection}>
-            {selectJSX}
-        </select>
+            {selectJSX}</select>
+            <div className="error">{this.props.error}</div>
             </div>
         )
     }
