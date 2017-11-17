@@ -22,13 +22,16 @@ class Header extends Component {
     * Passed as a prop to Artist for callback onChange event of artist dropdown
     */
     setArtist = (name) => {
+        this.props.toggleLoading();
         this.setState({
-          artist: name
+          artist: name,
         }, () =>{
             this.props.fetchTracks(this.state.artist);
             this.setState({
             currentSong: 0
-            })
+            }, () => {
+              this.playSong();
+              })
           });
     }
     
@@ -86,17 +89,17 @@ class Header extends Component {
                     <h1>Audio Player</h1>
                     <Artists artists={artists} setArtist={this.setArtist} selectedArtist={this.state.artist} error={this.props.error}/>
                     <div className="row">
-                    <div className="col-sm-12">
-                        <audio controls ref={(self) => {this.audioPlayer = self}} onEnded={this.playNext} autoPlay>
-                        <source src={songs[this.state.currentSong].track}/>
-                        </audio>
+                      <div className="col-sm-12">
+                          <audio controls ref={(self) => {this.audioPlayer = self}} onEnded={this.playNext} autoPlay>
+                          <source src={songs[this.state.currentSong].track}/>
+                          </audio>
+                      </div>
                     </div>
-                    </div>
-                    <div className="row">
-                    <div className="col-sm-3"><img src={songs[this.state.currentSong].images[2].url} alt="album" /></div>
-                    <div className="col-sm-9">{songs[this.state.currentSong].name} By: {artistsJSX}</div>
+                    <div className="playing">
+                      <div><img src={songs[this.state.currentSong].images[2].url} alt="album" /></div>
+                      <div>{songs[this.state.currentSong].name} by {artistsJSX}</div>
                     </div> 
-                    </div>
+                </div>
                     <Route exact path="/" render={(props) => (
                                                             <SongsList songs={songs}
                                                                     changeSong={this.changeSong}
@@ -107,6 +110,7 @@ class Header extends Component {
                                                                     <SongDetails  songs={songs}
                                                                                 showSongList={this.showSongList}
                                                                                 setCurrentSong={this.setCurrentSong} {...props}
+                                                                                tracksLoading={this.props.tracksLoading}
                                                                     />
                         } />
             </div>

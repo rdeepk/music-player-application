@@ -26,7 +26,7 @@ class SongsList extends Component {
                                 {song.name}
                             </div>
                             <div className="song-view">
-                            <Link to={"/"+ i}>More Info</Link>
+                            <Link to={"/"+ i} onClick={this.props.toggeleDetailsView}>More Info</Link>
                             </div>
                             <div className="song-play">
                                 <a href="" onClick={(e) => {this.playSong(e)}}>

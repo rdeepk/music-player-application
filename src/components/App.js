@@ -15,7 +15,8 @@ class App extends Component {
     this.state = {
       artists: [],
       songs: [],
-      loading:false
+      loading:false,
+      tracksLoading: false
     }
   }
 
@@ -54,6 +55,7 @@ class App extends Component {
             this.setState({songs: json},() => {
               this.setState({
                 loading: false,
+                tracksLoading: false,
                 error: ''
               })
             })
@@ -97,6 +99,12 @@ class App extends Component {
     })
   }
 
+  toggleLoading = () => {
+    this.setState({
+      tracksLoading: this.state.tracksLoading ? false : true
+    })
+  }
+
   render() {
     if(this.state.loading) {
       return <h3>Loading....</h3>
@@ -111,7 +119,9 @@ class App extends Component {
               error={this.state.error}
               fetchTracks={this.fetchTracks}
               defaultArtist={defaultArtist}
-              error={this.state.error}/>
+              error={this.state.error}
+              tracksLoading={this.state.tracksLoading}
+              toggleLoading={this.toggleLoading}/>
       </Router>
     );
   }

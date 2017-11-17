@@ -19,9 +19,13 @@ class SongDetails extends Component {
          let artistsJSX = songDetails.artists.map((artist, i) => {
             return <span key ={i}>{artist.name}</span>     
          })
+
+         if(this.props.tracksLoading) {
+            return <h3>Loading....</h3>
+          }
+
         return (
             <div>
-                <Link to="/">Back</Link>
                 <div className="track">
                         <div className="track-img">
                             <img src={songDetails.images[0].url} alt="album" />
@@ -36,7 +40,8 @@ class SongDetails extends Component {
                             <p>Artists: {artistsJSX}</p>
                             <p>Duration: {songDetails.duration}</p>
                             <p>Track Number: {songDetails.track_number}</p>
-                            <a href={songDetails.spotifyUrl} target="_blank">Listen Full Song on Spotify</a>
+                            <a className="btn" href={songDetails.spotifyUrl} target="_blank">Listen Full Song on Spotify</a>
+                            <Link className="btn" to="/">Go Back</Link>
                         </div>
                    
                 </div>
