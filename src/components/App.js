@@ -39,10 +39,8 @@ class App extends Component {
     tracksForArtist.then(response => {
       if (response.ok) {
         response.json().then(json => {
-          console.log(json);
           if(json.length !== 0) {
             this.setState({songs: json},() => {
-              console.log(this.state.songs);
               this.setState({
                 loading: false,
                 error: ''
@@ -59,7 +57,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("did mount");
     //fetch all artists
     let artistsData = this.sendGetRequest(serverUrl, 'artists');
     artistsData.then(response => {

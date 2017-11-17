@@ -8,17 +8,16 @@ class SongDetails extends Component {
     }
 
     render() {
-         console.log(this.props.songs)
          let songDetails = this.props.songs[Number(this.props.match.params.songId)];
          let artistsJSX = songDetails.artists.map((artist, i) => {
-            return <span>{artist.name}</span>
-            {/* <p>{artist.external_urls.spotify}</p> */}        
+            return <span key ={i}>{artist.name}</span>     
          })
         return (
             <div>
+                <Link to="/">Back</Link>
                 <div className="track">
                         <div className="track-img">
-                            <img src={songDetails.images[0].url} />
+                            <img src={songDetails.images[0].url} alt="album" />
                         </div>
                         <div className="track-details">
                             <h2>{songDetails.name}</h2>
@@ -27,7 +26,6 @@ class SongDetails extends Component {
                             </a>
                             <p>Album: {songDetails.album}</p>
                             <p>Popularity: {songDetails.popularity}</p>
-                            {/* <p>{songDetails.spotifyUrl}</p> */}
                             <p>Artists: {artistsJSX}</p>
                             <p>Duration: {songDetails.duration}</p>
                             <p>Track Number: {songDetails.track_number}</p>
@@ -35,7 +33,6 @@ class SongDetails extends Component {
                         </div>
                    
                 </div>
-                <Link to="/">Back</Link>
             </div>
         )
     }

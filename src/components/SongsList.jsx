@@ -15,7 +15,7 @@ class SongsList extends Component {
     render() {
         const {songs} = this.props;
         let songsJSX = songs.map((song, i) => {
-            return  <div className="song">
+            return  <div className="song" key = {i}>
                         {/* <div className="row" key={i}> */}
                             <div className="song-number">
                                 {i+1}

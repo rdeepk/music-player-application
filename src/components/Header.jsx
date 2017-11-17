@@ -12,7 +12,6 @@ class Header extends Component {
         this.state = {
             currentSong: 0,
             artist: this.props.defaultArtist,
-            currentSong: 0,
             error : ''
         }
     }
@@ -21,20 +20,17 @@ class Header extends Component {
         this.setState({
           artist: name
         }, () =>{
-          this.props.fetchTracks(this.state.artist, () => {
-              this.setState({
-                currentSong: 0
-              })
+            this.props.fetchTracks(this.state.artist);
+            this.setState({
+            currentSong: 0
+            })
           });
-        })
     }
   
     setCurrentSong = (index) => {
-      console.log(index);
       this.setState({
         currentSong: index
     }, () => {
-      console.log(this.state.currentSong)
       this.playSong();
       })
     }
@@ -64,7 +60,7 @@ class Header extends Component {
 
     render() {
         let artistsJSX = this.props.songs[this.state.currentSong].artists.map((artist, i) => {
-            return i > 0?<span>, {artist.name}</span> : <span>{artist.name}</span>      
+            return i > 0? <span key = {i}>, {artist.name}</span> : <span key = {i}>{artist.name}</span>      
          })
 
         return (
@@ -80,7 +76,7 @@ class Header extends Component {
                     </div>
                     </div>
                     <div className="row">
-                    <div className="col-sm-3"><img src={this.props.songs[this.state.currentSong].images[2].url} /></div>
+                    <div className="col-sm-3"><img src={this.props.songs[this.state.currentSong].images[2].url} alt="album" /></div>
                     <div className="col-sm-9">{this.props.songs[this.state.currentSong].name} By: {artistsJSX}</div>
                     </div> 
                     </div>
