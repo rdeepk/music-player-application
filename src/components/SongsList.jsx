@@ -24,8 +24,7 @@ class SongsList extends Component {
                                 {song.name}
                             </div>
                             <div className="song-view">
-                            <Link to={"/"+ i} onClick={(e) => {this.handleViewSong(e)}}>More Info</Link>
-                                {/* <a href="" id={i} onClick={(e) => {this.handleViewSong(e)}}>More Info</a> */}
+                            <Link to={"/"+ i}>More Info</Link>
                             </div>
                             <div className="song-play">
                                 <a href="" onClick={(e) => {this.playSong(e)}}>

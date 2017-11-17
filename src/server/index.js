@@ -8,20 +8,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-// function Song(source, title, description, id) {
-//   this.source = source;
-//   this.title = title;
-//   this.description = description;
-//   this.id = id;
-// }
+let token
 
-// const songs = [
-//   new Song('/upstep.mp3', 'Upstep', 'Brutal beat and bulky bass are the foundation for a dubstep frenzy featuring synths, wailing guitar and jitters and glitches. Tempo: 140bpm', 0),
-//   new Song('/olympian.mp3', 'Olympian', 'An energetic, vibrant track featuring positive electric guitar licks and modern drums creates useful sports theme. Tempo: 130bpm', 1),
-//   new Song('/transmission.mp3', 'Transmission', 'Energetic electronic melody featuring modern drums, snaking bass and explosive electric guitar. Tempo: 120bpm', 2)
-// ]
-
-artists = ['Post Malone', 
+let artists = ['Post Malone', 
 'Camila Cabello',
 'Dua Lipa',
 'Maroon 5',
@@ -50,16 +39,20 @@ artists = ['Post Malone',
 // 'Justin Bieber'
 ];
 
+let spotifyData = [];
+
 app.get('/default/:artistName', (req, res) => {
-  getSpotifyToken()
-                .then((tokenObj) => {
-                  getSpotifyData(tokenObj, req.params.artistName, 'artist').then((data) => {
-                    res.json({
+  token = getSpotifyToken();
+  artistName = req.params.artistName;
+  token.then((tokenObj) => {
+                  getSpotifyData(tokenObj, artistName, 'artist').then((data) => {
+                    let artistData = {
                       "name": data.artists.items[0].name,
                       "id": data.artists.items[0].id,
                       "apiUrl": data.artists.items[0].href,
                       "images": data.artists.items[0].images
-                    })
+                    }
+                    res.json(artistData)
                   });
                 });
 })
@@ -67,20 +60,23 @@ app.get('/default/:artistName', (req, res) => {
 app.get('/artists', (req, res) => {
  let spotifyArtists = [];
  let completed_requests = 0;
-//  let collectRequests = [];
-  getSpotifyToken()
-              .then((tokenObj) => {
+
+  if(!token) {
+    token = getSpotifyToken();
+  }
+  
+  token.then((tokenObj) => {
                   
                   artists.forEach((artist, i) => {                  
-                    // collectRequests.push((tokenObj, artist) => {getSpotifyData(tokenObj, artist)})
                    
                     getSpotifyData(tokenObj, artist, 'artist').then((tracks) => {
-                      spotifyArtists.push({
+                      let artistData = {
                         "name": tracks.artists.items[0].name,
                         "id": tracks.artists.items[0].id,
                         "apiUrl": tracks.artists.items[0].href,
                         "images": tracks.artists.items[0].images
-                      })
+                      }
+                      spotifyArtists.push(artistData);
                        completed_requests++;
                       if(completed_requests === artists.length) {
                         console.log(spotifyArtists);
@@ -88,23 +84,21 @@ app.get('/artists', (req, res) => {
                       }
                     })
                   })
-                  // Promise.all(collectRequests).then(values => { 
-                  //   console.log(values); // [3, 1337, "foo"] 
-                  // });
             })
 })
 
 app.get('/tracks/:artistName', (req, res) => {
-  getSpotifyToken()
-                .then((tokenObj) => {
-                  getSpotifyData(tokenObj, req.params.artistName, 'track').then((data) => {
+
+  if(!token) {
+    token = getSpotifyToken();
+  }
+  let artistName = req.params.artistName;
+  token.then((tokenObj) => {
+                  getSpotifyData(tokenObj, artistName, 'track').then((data) => {
                     let songs = [];
                     let itracks = data.tracks.items.filter((track, i)=>{
                       if(track.preview_url !== null) {
-                        console.log(track.album.name);
-                        console.log(track.name);
-                        console.log(track)
-                        songs.push({
+                        let artistTracks = {
                           id:track.id,
                           images: track.album.images,
                           track_number: track.track_number,
@@ -115,7 +109,9 @@ app.get('/tracks/:artistName', (req, res) => {
                           popularity: track.popularity,
                           duration: track.duration_ms,
                           artists: track.artists
-                        });
+                        }
+                        songs.push(artistTracks);
+                        spotifyData.push({artistName: artistTracks})
                         return true;
                       }
                     })
@@ -140,9 +136,9 @@ getSpotifyData = ((tokenBody, artist, type) => {
   return sendRequest(options);
 })
 
-app.get('/callback', (req, res) => {
-  console.log(req.query);
-})
+// app.get('/callback', (req, res) => {
+//   console.log(req.query);
+// })
 
 getSpotifyAuthString = () => {
   return new Buffer('dd0dbf7d895d4c2bb696143f14facc10' + ':' + '2cb236bb3db4456f91d22bf2d90ca034').toString('base64');

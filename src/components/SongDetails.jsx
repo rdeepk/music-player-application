@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
-
+import { Link } from 'react-router-dom';
 class SongDetails extends Component {
-
-    showSongList = (event) => {
-        this.props.showSongList();
-    }
 
     handlePlaySong = (e) => {
         e.preventDefault();
@@ -39,7 +35,7 @@ class SongDetails extends Component {
                         </div>
                    
                 </div>
-                <a href="/" onClick={(e) => {this.showSongList(e)}}>Back</a>
+                <Link to="/">Back</Link>
             </div>
         )
     }
