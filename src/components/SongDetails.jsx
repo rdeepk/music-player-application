@@ -1,7 +1,14 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+
+/**
+* This component display the details view of the song.
+*/
 class SongDetails extends Component {
 
+    /**
+    * callback handler for the play link.
+    */
     handlePlaySong = (e) => {
         e.preventDefault();
         this.props.setCurrentSong(Number(this.props.match.params.songId));

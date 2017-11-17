@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import Header from './Header';
 import {BrowserRouter as Router} from 'react-router-dom';
 
+//lets set one artist to fetch first to avoid delay in loading full data
 let defaultArtist = 'Camila Cabello';
 let serverUrl = 'http://localhost:8080/';
+
+/**
+* Top level Parent component.
+*/
 class App extends Component {
   constructor() {
     super();
@@ -14,6 +19,9 @@ class App extends Component {
     }
   }
 
+  /**
+  * Start fetching default artist first before component mounts.
+  */
   componentWillMount() {
     this.setState({
       loading: true
@@ -34,6 +42,9 @@ class App extends Component {
     this.fetchTracks(this.state.artist);
   }
 
+  /**
+  * Fetches tracks by name of the artist
+  */
   fetchTracks = (artist) => {
     let tracksForArtist = this.sendGetRequest(serverUrl, 'tracks/' + artist);
     tracksForArtist.then(response => {
@@ -56,6 +67,9 @@ class App extends Component {
     });
   }
 
+  /**
+  * Fetches complete set of artists once one default is loaded.
+  */
   componentDidMount() {
     //fetch all artists
     let artistsData = this.sendGetRequest(serverUrl, 'artists');
@@ -71,6 +85,9 @@ class App extends Component {
     })
   }
 
+  /**
+  * Sends request to beackend by taking url and endpoint as params.
+  */
   sendGetRequest = (url, endPoint) => {
     return fetch(url+endPoint, {
       method: 'GET',
@@ -87,7 +104,14 @@ class App extends Component {
 
     return (
       <Router>
-      <Header songs={this.state.songs} artists={this.state.artists} setArtist={this.setArtist} selectedArtist={this.state.artist} error={this.state.error} fetchTracks={this.fetchTracks} defaultArtist={defaultArtist} error={this.state.error}/>
+      <Header songs={this.state.songs}
+              artists={this.state.artists}
+              setArtist={this.setArtist}
+              selectedArtist={this.state.artist}
+              error={this.state.error}
+              fetchTracks={this.fetchTracks}
+              defaultArtist={defaultArtist}
+              error={this.state.error}/>
       </Router>
     );
   }

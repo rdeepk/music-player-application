@@ -239,6 +239,7 @@ audio {
 
 .error {
   margin-bottom: 50px;
+  color: red;
 }
 
 .track-details a{

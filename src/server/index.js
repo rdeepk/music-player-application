@@ -25,18 +25,18 @@ let artists = ['Post Malone',
 'Charlie Puth',
 'Kygo',
 'Demi Lovato',
-// 'Hailee Steinfeld',
-// 'French Montana',
-// 'Avicii',
-// 'Lil Uzi Vert',
-// 'Imagine Dragons',
-// 'Macklemore',
-// '21 Savage',
-// 'Natti Natasha',
-// 'Migos',
-// 'P!nk',
-// 'Charlie Puth',
-// 'Justin Bieber'
+'Hailee Steinfeld',
+'French Montana',
+'Avicii',
+'Lil Uzi Vert',
+'Imagine Dragons',
+'Macklemore',
+'21 Savage',
+'Natti Natasha',
+'Migos',
+'P!nk',
+'Charlie Puth',
+'Justin Bieber'
 ];
 
 let spotifyData = [];
@@ -115,7 +115,6 @@ app.get('/tracks/:artistName', (req, res) => {
                         return true;
                       }
                     })
-                    //console.log(songs);
                     res.json(songs);
                   });
                 });
@@ -126,7 +125,6 @@ app.get('/tracks/:artistName', (req, res) => {
 getSpotifyData = ((tokenBody, artist, type) => {
   var token = tokenBody.access_token;
   var options = {
-    //uri: 'https://api.spotify.com/v1/tracks/?ids=2bL2gyO6kBdLkNSkxXNh6x,3twNvmDtFQtAd5gMKedhLD',
     uri: 'https://api.spotify.com/v1/search?q='+artist+'&type='+type,
     headers: {
       'Authorization': 'Bearer ' + token
@@ -135,10 +133,6 @@ getSpotifyData = ((tokenBody, artist, type) => {
   };
   return sendRequest(options);
 })
-
-// app.get('/callback', (req, res) => {
-//   console.log(req.query);
-// })
 
 getSpotifyAuthString = () => {
   return new Buffer('dd0dbf7d895d4c2bb696143f14facc10' + ':' + '2cb236bb3db4456f91d22bf2d90ca034').toString('base64');

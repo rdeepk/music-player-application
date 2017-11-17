@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+* This component displays the songs list view by the selected artist.
+*/
 class SongsList extends Component {
 
-    handleViewSong = (e) => {
-        this.props.showSongDetails(e.target.id);
-    }
-
+    /**
+    *  callback handler on the click of play button.
+    */
     playSong = (event) => {
         event.preventDefault();
         this.props.setCurrentSong(event.target.id);

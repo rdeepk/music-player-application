@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 
+/**
+* This is component populates the artists dropdown and trigger the onChange event.
+*/
 class Artists extends Component {
 
     handleArtistSelection = (e) => {
