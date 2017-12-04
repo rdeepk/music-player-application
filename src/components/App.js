@@ -4,8 +4,8 @@ import {BrowserRouter as Router} from 'react-router-dom';
 
 //lets set one artist to fetch first to avoid delay in loading full data
 let defaultArtist = 'Camila Cabello';
-let serverUrl = 'http://localhost:8080/';
-
+// let serverUrl = 'http://localhost:7080/';
+let serverUrl = '/';
 /**
 * Top level Parent component.
 */

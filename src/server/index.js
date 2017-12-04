@@ -2,6 +2,12 @@ const express = require('express');
 const app = express();
 const rp = require('request-promise');
 
+var port = process.env.PORT || 7080;
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('build'));
+}
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -168,7 +174,7 @@ sendRequest = (options) => {
 
 
 // start Express on port
-app.listen(8080, () => {
+app.listen(port, () => {
   console.log('Server Started on http://localhost:8080');
   console.log('Press CTRL + C to stop server');
 });
