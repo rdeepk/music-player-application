@@ -1,4 +1,4 @@
-# [Audio songs player](https://mysterious-river-14927.herokuapp.com/)
+# Audio songs player
 
 This application uses Node.js and React. It uses Spotify Api to play 30 seconds audio songs.
 This project is bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
@@ -15,3 +15,5 @@ This project is bootstrapped with [Create React App](https://github.com/facebook
 - User can choose to play the song that is being displayed in the song details.
 - There is a link to go back to the songs list page while the currently playing song is not interrupted.
 - There is an option to play the full version of the song by going to the corresponding spotify page.
+
+## [Demo](https://mysterious-river-14927.herokuapp.com/)
